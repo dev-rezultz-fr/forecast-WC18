@@ -1,0 +1,16 @@
+{
+  "name": "rezultz",
+  "description": "ReZultZ application",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "polymerfire": "firebase/polymerfire#^2.2.1",
+    "iron-location": "PolymerElements/iron-location#^2.0.2",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.1.0",
+    "iron-icon": "PolymerElements/iron-icon#^2.0.1",
+    "iron-selector": "PolymerElements/iron-selector#^2.0.1",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.8",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.22",
+    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0"
+  }
+}

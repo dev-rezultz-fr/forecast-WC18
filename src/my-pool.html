@@ -1,0 +1,95 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="my-member.html">
+
+<dom-module id="my-pool">
+  <template>
+    <style>
+      h1[valid]{background-color:green;}
+      my-member{
+        display : block;
+      }
+      h1{
+        display : inline-block;
+        width : 236px;
+      }
+      span{
+        display : inline-block;
+        width : 24px;
+        text-align: center;
+      }
+    </style>
+    <h1>{{pool.ph_item_label}}</h1>
+    <template is="dom-repeat" items="{{arrayNbOut}}">
+      <span>{{item.index}}</span>
+    </template>
+    <template is="dom-repeat" items="{{pool.phase_members}}" as="mb">
+      <my-member member="{{mb}}" phase-item-id="{{pool.id_ph_item}}" array-nb-out="{{arrayNbOut}}" on-rank="_rankEvent"></my-member>
+    </template>
+  </template>
+  <script>
+    class MyPool extends Polymer.Element {
+      static get is() { return 'my-pool'; }
+      static get properties() {
+        return {
+          pool:{
+            type: Object,
+            //observer: '_poolChanged',
+            reflectToAttribute: true
+          },
+          arrayNbOut:{
+            type: Object,
+            reflectToAttribute: true
+          },
+          isValid:{
+            type: Boolean,
+            reflectToAttribute: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          // Observer method name, followed by a list of dependencies, in parenthesis
+          '_poolChanged(pool.nb_out_by_item)'
+        ]
+      }
+
+      ready(){
+        super.ready();
+      }
+      _poolChanged(n){
+        //console.log(this.pool);
+        var Arr = [];
+        for (var i=0; i<this.pool.nb_out_by_item; i++){
+          Arr.push({index:i+1});
+        }
+        this.set('arrayNbOut',Arr);
+      //  console.log(this.arrayNbOut);
+      }
+
+      _rankEvent(e){
+        //console.log(e.detail);
+        var rk = e.detail.rank;
+        var seq = e.detail.mb.seq_entity;
+        var lbl = e.detail.mb.label_entity;
+        var flg = e.detail.mb.id_entity;
+        var act = e.detail.action;
+        if (act){
+          var el = this.shadowRoot.querySelectorAll('my-member');
+          //console.log(el);
+          for (var i = 0;i<el.length;i++){
+            if(el[i].__data.member.seq_entity != seq && el[i].__data.rank == rk){
+              el[i].setRank(0);
+              break;
+              //console.log(el[i]);
+            }
+          }
+        }
+        this.dispatchEvent(new CustomEvent('qualif', {detail: {action: act, rank: rk, label : lbl , flag : flg, pool : this.pool.id_ph_item, level : this.pool.trn_level}}));
+
+      }
+
+    }
+    window.customElements.define(MyPool.is, MyPool);
+  </script>
+</dom-module>

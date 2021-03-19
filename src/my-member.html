@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html">
+
+<dom-module id="my-member">
+  <template>
+    <style>
+      input{
+        display : inline-block;
+        width : 24px;
+        margin:0;
+      }
+      span {
+        display: inline-block;
+        width: 200px;
+      }
+
+    </style>
+
+      <img src="images/{{member.id_entity}}.png"/>
+      <span>{{member.label_entity}}</span>
+
+
+      <paper-radio-group selected="{{rank}}" allow-empty-selection>
+        <template is="dom-repeat" items="{{arrayNbOut}}">
+          <!--<input type="radio" id="" name="{{phaseItemId}}-{{member.seq_entity}}" value="{{item.index}}">-->
+          <paper-radio-button name="{{item.index}}" on-checked-changed="_rankChanged"></paper-radio-button>
+        </template>
+      </paper-radio-group>
+      <!--<paper-radio-group allowEmptySelection=false >
+        <template is="dom-repeat" items="{{nboutitem}}" as="radiobtn">
+          <paper-radio-button name="{{member.label_entity}}"></paper-radio-button>
+        </template>
+      </paper-radio-group>-->
+
+  </template>
+  <script>
+    class MyMember extends Polymer.Element {
+      static get is() { return 'my-member'; }
+      static get properties() {
+        return {
+          member:{
+            type: Object,
+            reflectToAttribute: true
+          },
+          phaseItemId:{
+            type: Number,
+            reflectToAttribute: true
+          },
+          arrayNbOut:{
+            type: Object,
+            reflectToAttribute: true
+          },
+          rank:{
+            type: Number,
+            value : 0
+            //observer: '_rankChanged'
+          }
+        };
+      }
+      ready(){
+        super.ready();
+      }
+
+      _rankChanged(e){
+        //if(e.target.checked){
+          this.dispatchEvent(new CustomEvent('rank', {detail: {action: e.target.checked, rank: e.target.name, mb: this.member}}));
+        //}
+      }
+
+      setRank(v){
+        this.set('rank',v);
+      }
+
+    }
+    window.customElements.define(MyMember.is, MyMember);
+  </script>
+</dom-module>

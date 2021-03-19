@@ -1,0 +1,82 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="my-pool.html">
+
+<dom-module id="my-app">
+  <template>
+    <style>
+    </style>
+    <iron-ajax
+        auto
+        url="https://api.gcazweb.fr/rzz/nostradamus/104"
+        handle-as="json"
+        last-response="{{data}}"
+        on-response="_getData"></iron-ajax>
+
+    <template is="dom-repeat" items="{{data}}" as="phase">
+      <p>
+        {{phase.code_phase}}
+        <i>{{phase.ndm_label}}</i>
+      </p>
+
+      <template is="dom-repeat" items="{{phase.phase_items}}" as="pl">
+        <my-pool pool="{{pl}}" on-qualif="_qualifEvent"></my-pool>
+      </template>
+    </template>
+
+  </template>
+  <script>
+    class MyApp extends Polymer.Element {
+      static get is() { return 'my-app'; }
+      static get properties() {
+        return {
+          data:{
+            type: Object
+          }
+        };
+      }
+      ready(){
+        super.ready();
+      }
+      _getData(e){
+        //this.set('data',e.target.lastResponse);
+        console.log(this.data);
+      }
+
+      _qualifEvent(e){
+        var lvl = e.detail.level;
+        var rnk = e.detail.rank;
+        var pool = e.detail.pool;
+        var flg = e.detail.flag;
+        var lbl = e.detail.label;
+        var act = e.detail.action;
+
+        for (var i=0 ; i<this.data.length; i++){
+          if(this.data[i].trn_level == lvl){
+            break;
+          }
+
+        }
+        //console.log(this.data[i+1].phase_items);
+        items : for(var j=0;j<this.data[i+1].phase_items.length; j++){
+          members : for(var k=0;k<this.data[i+1].phase_items[j].phase_members.length; k++){
+            var mb = this.data[i+1].phase_items[j].phase_members[k];
+            if(mb.rank_ent_from == rnk && mb.ph_item_from == pool){
+              if(act){
+                this.set('data.'+(i+1)+'.phase_items.'+j+'.phase_members.'+k+'.id_entity',flg);
+                this.set('data.'+(i+1)+'.phase_items.'+j+'.phase_members.'+k+'.label_entity',lbl);
+              }else{
+                this.set('data.'+(i+1)+'.phase_items.'+j+'.phase_members.'+k+'.id_entity',mb.init.id_entity);
+                this.set('data.'+(i+1)+'.phase_items.'+j+'.phase_members.'+k+'.label_entity',mb.init.label_entity);
+              }
+              break items;
+            }
+          }
+        }
+
+      }
+
+    }
+    window.customElements.define(MyApp.is, MyApp);
+  </script>
+</dom-module>
